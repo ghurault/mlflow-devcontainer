@@ -1,0 +1,31 @@
+{
+  "name": "Python MLflow",
+
+  "dockerComposeFile": "docker-compose.yml",
+  "service": "devcontainer",
+  "workspaceFolder": "/workspaces/devcontainer-mlflow",
+
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "kevinrose.vsc-python-indent",
+        "mhutchie.git-graph",
+        "ms-python.black-formatter",
+        "ms-python.python",
+        "ms-python.vscode-pylance",
+        "ms-toolsai.jupyter"
+      ]
+    }
+  },
+
+  // Uncomment to connect as root instead. More info: https://aka.ms/dev-containers-non-root.
+  // "remoteUser": "root"
+
+  "forwardPorts": ["mlflow-server:7000"],
+
+  "remoteEnv": {
+    "MLFLOW_TRACKING_URI": "http://localhost:7000"
+  }
+
+  // "runArgs": ["--env-file", ".env"]
+}

@@ -1,0 +1,70 @@
+"""Testing MLflow."""
+
+# %%
+# Initialisation
+
+import tempfile
+from pathlib import Path
+
+import matplotlib.pyplot as plt
+import mlflow
+import numpy as np
+import pandas as pd
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import mean_squared_error
+
+mlflow.set_experiment("test")
+
+rng = np.random.default_rng(42)
+
+# %%
+# Processing
+
+# Fake data
+X = rng.standard_normal((100, 1))
+y = 3 * X.squeeze() + 0.5 + rng.standard_normal(100) * 0.1
+df = pd.DataFrame({"x": X.squeeze(), "y": y})
+
+# Train model
+model = LinearRegression()
+model.fit(X, y)
+preds = model.predict(X)
+mse = mean_squared_error(y, preds)
+
+# Plot
+fig, ax = plt.subplots()
+ax.scatter(X, y, label="data")
+ax.plot(X, preds, color="red", label="model")
+ax.set_title("Linear Fit")
+ax.legend()
+
+with mlflow.start_run():
+
+    mlflow.log_param("model_type", "LinearRegression")
+    mlflow.log_param("n_samples", len(X))
+
+    mlflow.log_metric("mse", mse)
+
+    with tempfile.TemporaryDirectory() as tmpdir:
+        csv_path = Path(tmpdir) / "data.csv"
+        df.to_csv(csv_path, index=False)
+        mlflow.log_artifact(csv_path)
+
+    mlflow.log_figure(fig, "fit.png")
+
+# %%
+
+if False:
+    # When using a local file system, does it really download the files?
+    # Supposedly no (from the documentation), but the local path appears to be in a
+    # temporary directory, so at least it is doing a copy.
+    # Maybe it is not doing downloading when we use database as a backend?
+
+    from mlflow.tracking import MlflowClient
+
+    client = MlflowClient()
+
+    run_id = "4765d6a62ab04747a2ce9698b39aef27"
+    client.download_artifacts(run_id, path="data.csv")
+
+# %%

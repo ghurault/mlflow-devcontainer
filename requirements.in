@@ -1,0 +1,9 @@
+# Direct dependencies
+ipykernel
+ipywidgets
+matplotlib
+mlflow-skinny
+numpy
+pandas
+scikit-learn
+uv

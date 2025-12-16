@@ -1,0 +1,26 @@
+services:
+  devcontainer:
+    build:
+      context: ..
+      dockerfile: Dockerfile
+      args:
+        PYTHON_VERSION: "3.12"
+    container_name: devcontainer
+    volumes:
+      - ..:/workspaces/devcontainer-mlflow
+    command: sleep infinity
+  
+  mlflow-server:
+    image: ghcr.io/mlflow/mlflow:latest
+    container_name: mlflow-server
+    ports:
+      - "7000:7000"
+    volumes:
+      - ../mlflow/db:/mlflow/db
+      - ../mlflow/artifacts:/mlflow/artifacts
+    command: >
+      mlflow server
+      --backend-store-uri sqlite:////mlflow/db/mlflow.db
+      --default-artifact-root file:////mlflow/artifacts
+      --host 0.0.0.0
+      --port 7000
