@@ -24,7 +24,7 @@
   "forwardPorts": ["mlflow-server:7000"],
 
   "remoteEnv": {
-    "MLFLOW_TRACKING_URI": "http://localhost:7000"
+    "MLFLOW_TRACKING_URI": "http://mlflow-server:7000"
   }
 
   // "runArgs": ["--env-file", ".env"]
