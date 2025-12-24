@@ -53,18 +53,3 @@ with mlflow.start_run():
     mlflow.log_figure(fig, "fit.png")
 
 # %%
-
-if False:
-    # When using a local file system, does it really download the files?
-    # Supposedly no (from the documentation), but the local path appears to be in a
-    # temporary directory, so at least it is doing a copy.
-    # Maybe it is not doing downloading when we use database as a backend?
-
-    from mlflow.tracking import MlflowClient
-
-    client = MlflowClient()
-
-    run_id = "4765d6a62ab04747a2ce9698b39aef27"
-    client.download_artifacts(run_id, path="data.csv")
-
-# %%
