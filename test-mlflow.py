@@ -3,7 +3,9 @@
 # %%
 # Initialisation
 
+import logging
 import tempfile
+import warnings
 from pathlib import Path
 
 import matplotlib.pyplot as plt
@@ -18,7 +20,23 @@ mlflow.set_experiment("test")
 rng = np.random.default_rng(42)
 
 # %%
+# Configure logger (to upload as a file to MLflow later)
+
+log_file = Path("log.txt")
+log_file.unlink(missing_ok=True)
+
+logger = logging.getLogger()
+logger.setLevel(logging.INFO)
+file_handler = logging.FileHandler(log_file)
+formatter = logging.Formatter("%(asctime)s %(levelname)s %(name)s: %(message)s")
+file_handler.setFormatter(formatter)
+logger.addHandler(file_handler)
+logging.captureWarnings(True)
+
+# %%
 # Processing
+
+logging.info("Hello world!")
 
 # Fake data
 X = rng.standard_normal((100, 1))
@@ -38,6 +56,11 @@ ax.plot(X, preds, color="red", label="model")
 ax.set_title("Linear Fit")
 ax.legend()
 
+warnings.warn("This is a test warning!")
+
+# %%
+# Logging to MLflow
+
 with mlflow.start_run():
 
     mlflow.log_param("model_type", "LinearRegression")
@@ -51,5 +74,7 @@ with mlflow.start_run():
         mlflow.log_artifact(csv_path)
 
     mlflow.log_figure(fig, "fit.png")
+
+    mlflow.log_artifact(log_file)
 
 # %%
